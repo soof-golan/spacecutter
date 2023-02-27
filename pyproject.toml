@@ -16,7 +16,7 @@ description = "Ordinal regression models in PyTorch"
 authors = ["Soof Golan <pypi@soofgolan.com>"]
 license = "MIT"
 readme = "README.md"
-packages = [{ include = "spacecutter_torch" }]
+packages = [{ include = "spacecutter" }]
 
 [tool.poetry.dependencies]
 python = "^3.8"
