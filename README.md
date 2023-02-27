@@ -15,22 +15,20 @@ pip install spacecutter
 Define any PyTorch model you want that generates a single, scalar prediction value. This will be our `predictor` model. This model can then be wrapped with `spacecutter.models.OrdinalLogisticModel` which will convert the output of the `predictor` from a single number to an array of ordinal class probabilities. The following example shows how to do this for a two layer neural network `predictor` for a problem with three ordinal classes.
 
 ```python
-import numpy as np
 import torch
 from torch import nn
 
 from spacecutter.models import OrdinalLogisticModel
 
 
-X = np.array([[0.5, 0.1, -0.1],
+X = torch.tensor([[0.5, 0.1, -0.1],
               [1.0, 0.2, 0.6],
-              [-2.0, 0.4, 0.8]],
-             dtype=np.float32)
+              [-2.0, 0.4, 0.8]]).float()
 
-y = np.array([0, 1, 2]).reshape(-1, 1)
+y = torch.tensor([0, 1, 2]).reshape(-1, 1).long()
 
 num_features = X.shape[1]
-num_classes = len(np.unique(y))
+num_classes = len(torch.unique(y))
 
 predictor = nn.Sequential(
     nn.Linear(num_features, num_features),
@@ -40,7 +38,7 @@ predictor = nn.Sequential(
 
 model = OrdinalLogisticModel(predictor, num_classes)
 
-y_pred = model(torch.as_tensor(X))
+y_pred = model(X)
 
 print(y_pred)
 

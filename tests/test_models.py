@@ -1,4 +1,3 @@
-import numpy as np
 from skorch import NeuralNet
 import torch
 from torch import nn
