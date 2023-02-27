@@ -11,7 +11,7 @@ urls = { "Source" = "https://github.com/soof-golan/spacecutter" }
 
 [tool.poetry]
 name = "spacecutter-torch"
-version = "0.3.5"
+version = "0.4.0"
 description = "Ordinal regression models in PyTorch"
 authors = ["Soof Golan <pypi@soofgolan.com>"]
 license = "MIT"
