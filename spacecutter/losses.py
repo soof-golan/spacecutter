@@ -21,20 +21,22 @@ def _reduction(loss: torch.Tensor, reduction: str) -> torch.Tensor:
         Reduced loss.
 
     """
-    if reduction == 'elementwise_mean':
+    if reduction == "elementwise_mean":
         return loss.mean()
-    elif reduction == 'none':
+    elif reduction == "none":
         return loss
-    elif reduction == 'sum':
+    elif reduction == "sum":
         return loss.sum()
     else:
-        raise ValueError(f'{reduction} is not a valid reduction')
+        raise ValueError(f"{reduction} is not a valid reduction")
 
 
-def cumulative_link_loss(y_pred: torch.Tensor, y_true: torch.Tensor,
-                         reduction: str = 'elementwise_mean',
-                         class_weights: Optional[torch.Tensor] = None
-                         ) -> torch.Tensor:
+def cumulative_link_loss(
+    y_pred: torch.Tensor,
+    y_true: torch.Tensor,
+    reduction: str = "elementwise_mean",
+    class_weights: Optional[torch.Tensor] = None,
+) -> torch.Tensor:
     """
     Calculates the negative log likelihood using the logistic cumulative link
     function.
@@ -92,14 +94,16 @@ class CumulativeLinkLoss(nn.Module):
 
     """
 
-    def __init__(self, reduction: str = 'elementwise_mean',
-                 class_weights: Optional[torch.Tensor] = None) -> None:
+    def __init__(
+        self,
+        reduction: str = "elementwise_mean",
+        class_weights: Optional[torch.Tensor] = None,
+    ) -> None:
         super().__init__()
         self.class_weights = class_weights
         self.reduction = reduction
 
-    def forward(self, y_pred: torch.Tensor,
-                y_true: torch.Tensor) -> torch.Tensor:
-        return cumulative_link_loss(y_pred, y_true,
-                                    reduction=self.reduction,
-                                    class_weights=self.class_weights)
+    def forward(self, y_pred: torch.Tensor, y_true: torch.Tensor) -> torch.Tensor:
+        return cumulative_link_loss(
+            y_pred, y_true, reduction=self.reduction, class_weights=self.class_weights
+        )

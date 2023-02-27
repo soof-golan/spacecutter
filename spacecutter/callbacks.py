@@ -1,10 +1,10 @@
-from skorch.callbacks import Callback
-from torch.nn import Module
+import torch
+from torch import nn
 
 from spacecutter.models import LogisticCumulativeLink
 
 
-class AscensionCallback(Callback):
+class AscensionCallback:
     """
     Ensure that each cutpoint is ordered in ascending value.
     e.g.
@@ -23,19 +23,23 @@ class AscensionCallback(Callback):
     min_val : float, (default=-1e6)
         Minimum value that the smallest cutpoint may take.
     """
+
     def __init__(self, margin: float = 0.0, min_val: float = -1.0e6) -> None:
-        super().__init__()
         self.margin = margin
         self.min_val = min_val
 
-    def clip(self, module: Module) -> None:
-        # NOTE: Only works for LogisticCumulativeLink right now
-        # We assume the cutpoints parameters are called `cutpoints`.
+    def clip_cutpoints(self, module: nn.Module) -> None:
         if isinstance(module, LogisticCumulativeLink):
-            cutpoints = module.cutpoints.data
-            for i in range(cutpoints.shape[0] - 1):
-                cutpoints[i].clamp_(self.min_val,
-                                    cutpoints[i + 1] - self.margin)
+            assert hasattr(
+                module, "cutpoints"
+            ), "Module must have a cutpoints attribute."
+            assert isinstance(
+                module.cutpoints, nn.Parameter
+            ), "Module.cutpoints must be a torch.nn.Parameter."
+            cutpoints: torch.Tensor = module.cutpoints.data
+            min_val = torch.tensor(self.min_val).to(cutpoints.device)
+            max_val = cutpoints[1:] - self.margin
+            cutpoints[:-1].clamp_(min_val, max_val)
 
-    def on_batch_end(self, net: Module, *args, **kwargs) -> None:
-        net.module_.apply(self.clip)
+    def __call__(self, *args, **kwargs):
+        return self.clip_cutpoints(*args, **kwargs)
