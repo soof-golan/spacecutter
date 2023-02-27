@@ -1,9 +1,11 @@
 import torch
 from torch import nn
-from typing import Optional
+from typing import Literal, Optional
+
+Reduction = Literal["elementwise_mean", "none", "sum"]
 
 
-def _reduction(loss: torch.Tensor, reduction: str) -> torch.Tensor:
+def _reduction(loss: torch.Tensor, reduction: Reduction) -> torch.Tensor:
     """
     Reduce loss
 
@@ -11,7 +13,7 @@ def _reduction(loss: torch.Tensor, reduction: str) -> torch.Tensor:
     ----------
     loss : torch.Tensor, [batch_size, num_classes]
         Batch losses.
-    reduction : str
+    reduction : Reduction
         Method for reducing the loss. Options include 'elementwise_mean',
         'none', and 'sum'.
 
@@ -34,7 +36,7 @@ def _reduction(loss: torch.Tensor, reduction: str) -> torch.Tensor:
 def cumulative_link_loss(
     y_pred: torch.Tensor,
     y_true: torch.Tensor,
-    reduction: str = "elementwise_mean",
+    reduction: Reduction = "elementwise_mean",
     class_weights: Optional[torch.Tensor] = None,
 ) -> torch.Tensor:
     """
@@ -52,7 +54,7 @@ def cumulative_link_loss(
         Predicted target class probabilities. float dtype.
     y_true : torch.Tensor, [batch_size, 1]
         True target classes. long dtype.
-    reduction : str
+    reduction : Reduction
         Method for reducing the loss. Options include 'elementwise_mean',
         'none', and 'sum'.
     class_weights : torch.Tensor, [num_classes] optional (default=None)
@@ -84,7 +86,7 @@ class CumulativeLinkLoss(nn.Module):
 
     Parameters
     ----------
-    reduction : str
+    reduction : Reduction
         Method for reducing the loss. Options include 'elementwise_mean',
         'none', and 'sum'.
     class_weights : torch.Tensor, [num_classes] optional (default=None)
@@ -96,7 +98,7 @@ class CumulativeLinkLoss(nn.Module):
 
     def __init__(
         self,
-        reduction: str = "elementwise_mean",
+        reduction: Reduction = "elementwise_mean",
         class_weights: Optional[torch.Tensor] = None,
     ) -> None:
         super().__init__()
