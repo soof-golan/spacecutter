@@ -1,6 +1,6 @@
 # spacecutter
 
-`spacecutter` is a library for implementing ordinal regression models in PyTorch. The library consists of models and loss functions. It is recommended to use [skorch](http://skorch.readthedocs.io/) to wrap the models to make them compatible with scikit-learn.
+`spacecutter` is a library for implementing ordinal regression models in PyTorch. The library consists of models and loss functions.
 
 ## Installation
 
@@ -18,7 +18,7 @@ Define any PyTorch model you want that generates a single, scalar prediction val
 import torch
 from torch import nn
 
-from spacecutter.models import OrdinalLogisticModel
+from spacecutter.models import OrdinalLogisticHead
 
 
 X = torch.tensor([[0.5, 0.1, -0.1],
@@ -30,13 +30,12 @@ y = torch.tensor([0, 1, 2]).reshape(-1, 1).long()
 num_features = X.shape[1]
 num_classes = len(torch.unique(y))
 
-predictor = nn.Sequential(
+model = nn.Sequential(
     nn.Linear(num_features, num_features),
     nn.ReLU(),
-    nn.Linear(num_features, 1)
+    nn.Linear(num_features, 1),
+    OrdinalLogisticHead(num_classes),
 )
-
-model = OrdinalLogisticModel(predictor, num_classes)
 
 y_pred = model(X)
 
@@ -50,26 +49,35 @@ print(y_pred)
 
 ### Training
 
-It is recommended to use [skorch](http://skorch.readthedocs.io/) to train `spacecutter` models. The following shows how to train the model from the previous section using cumulative link loss with `skorch`:
+The following shows how to train the model from the previous section using cumulative link loss:
 
 ```python
-from skorch import NeuralNet
-
+import torch
 from spacecutter.callbacks import AscensionCallback
 from spacecutter.losses import CumulativeLinkLoss
 
-skorch_model = NeuralNet(
-    module=OrdinalLogisticModel,
-    module__predictor=predictor,
-    module__num_classes=num_classes,
-    criterion=CumulativeLinkLoss,
-    train_split=None,
-    callbacks=[
-        ('ascension', AscensionCallback()),
-    ],
-)
+def train(model, optimizer, X, y, num_epochs = 10) -> list:
+    """
+    you can bring your own training loop if you want, but we provide a very simple one here. 
+    """
+    model.train()
+    on_batch_end_callbacks = [AscensionCallback()]
+    loss_fn = CumulativeLinkLoss()
+    losses = []
+    for epoch in range(num_epochs):
+        optimizer.zero_grad()
+        y_pred = model(X)
+        loss = loss_fn(y_pred, y)
+        loss.backward()
+        optimizer.step()
+        losses.append(loss.item())
+        with torch.no_grad():
+            for callback in on_batch_end_callbacks:
+                model.apply(callback)
+    return losses
 
-skorch_model.fit(X, y)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
+losses = train(model, optimizer, X, y)
 
 ```
 
