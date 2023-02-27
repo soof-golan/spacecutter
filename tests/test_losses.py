@@ -1,4 +1,3 @@
-import numpy as np
 import pytest
 import torch
 
@@ -42,7 +41,7 @@ class Test_cumulative_link_loss:
 
     def test_class_weights(self):
         y_true = torch.LongTensor([[1], [2]])
-        class_weights = np.array([5, 10, 20])
+        class_weights = torch.tensor([5, 10, 20], device=y_true.device)
         output = losses.cumulative_link_loss(self.y_pred, y_true,
                                              class_weights=class_weights)
         # picks out log(0.5) and log(0.3), multiplies by 10 and 20, respectively.

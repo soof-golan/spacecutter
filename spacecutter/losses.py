@@ -1,4 +1,3 @@
-import numpy as np
 import torch
 from torch import nn
 from typing import Optional
@@ -34,7 +33,7 @@ def _reduction(loss: torch.Tensor, reduction: str) -> torch.Tensor:
 
 def cumulative_link_loss(y_pred: torch.Tensor, y_true: torch.Tensor,
                          reduction: str = 'elementwise_mean',
-                         class_weights: Optional[np.ndarray] = None
+                         class_weights: Optional[torch.Tensor] = None
                          ) -> torch.Tensor:
     """
     Calculates the negative log likelihood using the logistic cumulative link
@@ -54,7 +53,7 @@ def cumulative_link_loss(y_pred: torch.Tensor, y_true: torch.Tensor,
     reduction : str
         Method for reducing the loss. Options include 'elementwise_mean',
         'none', and 'sum'.
-    class_weights : np.ndarray, [num_classes] optional (default=None)
+    class_weights : torch.Tensor, [num_classes] optional (default=None)
         An array of weights for each class. If included, then for each sample,
         look up the true class and multiply that sample's loss by the weight in
         this array.
@@ -69,10 +68,8 @@ def cumulative_link_loss(y_pred: torch.Tensor, y_true: torch.Tensor,
     neg_log_likelihood = -torch.log(likelihoods)
 
     if class_weights is not None:
-        # Make sure it's on the same device as neg_log_likelihood
-        class_weights = torch.as_tensor(class_weights,
-                                        dtype=neg_log_likelihood.dtype,
-                                        device=neg_log_likelihood.device)
+        # Make sure it's on the same dtype as neg_log_likelihood
+        class_weights = class_weights.to(neg_log_likelihood.dtype)
         neg_log_likelihood *= class_weights[y_true]
 
     loss = _reduction(neg_log_likelihood, reduction)
@@ -88,7 +85,7 @@ class CumulativeLinkLoss(nn.Module):
     reduction : str
         Method for reducing the loss. Options include 'elementwise_mean',
         'none', and 'sum'.
-    class_weights : np.ndarray, [num_classes] optional (default=None)
+    class_weights : torch.Tensor, [num_classes] optional (default=None)
         An array of weights for each class. If included, then for each sample,
         look up the true class and multiply that sample's loss by the weight in
         this array.
