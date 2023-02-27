@@ -1,11 +1,11 @@
-# spacecutter
+# spacecutter-torch
 
-`spacecutter` is a library for implementing ordinal regression models in PyTorch. The library consists of models and loss functions.
+`spacecutter-torch` is a library for implementing ordinal regression models in PyTorch. The library consists of models and loss functions.
 
 ## Installation
 
 ```bash
-pip install spacecutter
+pip install spacecutter-torch
 ```
 
 ## Usage
