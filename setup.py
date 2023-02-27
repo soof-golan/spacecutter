@@ -16,14 +16,14 @@ with open(os.path.join(here, 'test-requirements.txt')) as f:
 
 
 setup(
-    name='spacecutter',
+    name='spacecutter-torch',
     version=__version__,
     description='Ordinal regression models in PyTorch',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url='https://github.com/EthanRosenthal/spacecutter',
-    author='Ethan Rosenthal',
-    author_email='ethanrosenthal@gmail.com',
+    url='https://github.com/soof-golan/spacecutter',
+    author='Soof Golan',
+    author_email='pypi@soofgolan.com',
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
