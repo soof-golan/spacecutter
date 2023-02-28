@@ -7,11 +7,12 @@ classifiers = [
     'Programming Language :: Python :: 3',
 ]
 keywords = ['ordinal regression', 'pytorch', 'machine learning', 'statistics', 'regression']
-urls = { "Source" = "https://github.com/soof-golan/spacecutter" }
+homepage= "https://github.com/soof-golan/spacecutter"
+repository = "https://github.com/soof-golan/spacecutter"
 
 [tool.poetry]
 name = "spacecutter-torch"
-version = "0.4.0"
+version = "0.4.1"
 description = "Ordinal regression models in PyTorch"
 authors = ["Soof Golan <pypi@soofgolan.com>"]
 license = "MIT"
