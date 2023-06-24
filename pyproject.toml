@@ -12,7 +12,7 @@ repository = "https://github.com/soof-golan/spacecutter"
 
 [tool.poetry]
 name = "spacecutter-torch"
-version = "0.4.1"
+version = "1.0.0"
 description = "Ordinal regression models in PyTorch"
 authors = ["Soof Golan <pypi@soofgolan.com>"]
 license = "MIT"
@@ -21,7 +21,7 @@ packages = [{ include = "spacecutter" }]
 
 [tool.poetry.dependencies]
 python = "^3.8"
-torch = "^1.1.0"
+torch = "^2.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.1.0"
